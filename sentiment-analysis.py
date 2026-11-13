@@ -1,7 +1,4 @@
 import os
-os.getcwd()
-os.chdir("C:/Users/Albin/Documents/GitHub/sentiment-analysis")
-os.getcwd()
 import pandas as pd
 df=pd.read_csv("customer_reviews.csv")
 
@@ -20,7 +17,8 @@ df["score"]=df["text"].apply(lambda x:sa.polarity_scores(x))
 df["compound_score"]=df["score"].apply(lambda x:x["compound"])
 
 import numpy as np
-df["positive_negative"]=df["compound_score"].apply(lambda x:np.where(x>0.5,"Positive","Negative"))
-#counting of negative and positive feedback
-df["positive_negative"].value_counts()
+#standard VADER thresholds: >= 0.05 positive, <= -0.05 negative, anything in between is neutral
+df["positive_negative"]=df["compound_score"].apply(lambda x:"Positive" if x>=0.05 else ("Negative" if x<=-0.05 else "Neutral"))
+#counting of positive, negative and neutral feedback
+print(df["positive_negative"].value_counts())
 positive_data=df.query("positive_negative=='Positive'")
